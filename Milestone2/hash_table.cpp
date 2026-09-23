@@ -11,6 +11,7 @@
  */
 
 #include "hash_table.h"
+#include "milestone2.h"
 
 /**
 *
@@ -115,7 +116,7 @@ bool HashTable::add(int curKey, HashNode* myNode) {
 
         int bucket_index = calculateHashCode(curKey);
 
-        myNode->key = curKey
+        myNode->key = curKey;
         myNode->hashCode = bucket_index;
 
         // insert node at the head
@@ -128,7 +129,7 @@ bool HashTable::add(int curKey, HashNode* myNode) {
             }
 
         // make the beginning of the bucket point to the new node
-        table[index] = myNode;
+        table[bucket_index] = myNode;
 
         ++numberOfItems;
 
@@ -150,32 +151,32 @@ bool HashTable::add(int curKey, HashNode* myNode) {
 bool HashTable::remove(int curKey) {
         int bucket_index = calculateHashCode(curKey);
 
-        HashNode* current_node = table[bucket_index]
+        HashNode* current_node = table[bucket_index];
 
         while (current_node != nullptr) {
             if (current_node->key == curKey) {
                 
                 // accounting for the previous node
                 if (current_node->prev != nullptr) {
-                    current->prev->next = current_node->next;
+                    current_node->prev->next = current_node->next;
                 } else {
                     // the case where the the current is the head
-                    table[index] = current_node->next;
+                    table[bucket_index] = current_node->next;
                     }
                 // accounting for the next node
-                if (current->next != nullptr) {
-                    current->next->prev = current->prev;
+                if (current_node->next != nullptr) {
+                    current_node->next->prev = current_node->prev;
                     }
 
-                current->prev = nullptr
-                current->next = nullptr;
+                current_node->prev = nullptr;
+                current_node->next = nullptr;
 
                 --numberOfItems;
 
                 return true;
 
                 }
-            current = current->next
+            current_node = current_node->next;
             }
         // the case where no matching key is found
         return false;
@@ -220,7 +221,19 @@ void HashTable::clear() {
 * @return   pointer to the corresponding HashNode, or nullptr if not found
 *
 */
-HashNode* HashTable::getItem(int curKey);
+HashNode* HashTable::getItem(int curKey) {
+        int bucket_index = calculateHashCode(curKey);
+        HashNode* current_node = table[bucket_index];
+
+        // search through every node in each bucket starting from the head
+        while (current_node !=nullptr) {
+            if (current_node->key == curKey) {
+                return current_node;
+                }
+            current_node = current_node->next;
+            }
+        return nullptr;
+    }
 
 
 /**
@@ -234,7 +247,9 @@ HashNode* HashTable::getItem(int curKey);
 * @return   true if the key is found, false otherwise
 *
 */
-bool HashTable::contains(int curKey);
+bool HashTable::contains(int curKey) {
+        return (getItem(curKey) != nullptr);
+    }
 
 
 /**
@@ -248,4 +263,31 @@ bool HashTable::contains(int curKey);
 * @return   none
 *
 */
-void HashTable::printTable();
+void HashTable::printTable() {
+        logToFileAndConsole(
+            "\nHere are the Hash Table contents (" +
+            std::to_string(numberOfItems) + 
+            " entries):"
+        );
+
+        for (int i = 0; i < numberOfBuckets; ++i) {
+            if (table[i] == nullptr) {
+                logToFileAndConsole (
+                    "Bucket " + std::to_string(i) + ": Empty"
+                    );
+                } 
+            else {
+                logToFileAndConsole (
+                    "Bucket " + std::to_string(i) + ": "
+                    );
+
+                HashNode* current_node = table[i];
+
+                while (current_node != nullptr) {
+                    current_node->printNode(true);
+                    current_node = current_node->next;
+                    }
+                }
+            }
+        logToFileAndConsole("End of table");
+    }
