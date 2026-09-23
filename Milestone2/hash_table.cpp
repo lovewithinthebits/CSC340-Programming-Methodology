@@ -1,8 +1,9 @@
 /**
- * @file hash_table.h
+ * @file hash_table.cpp
  * @brief Implementation of the member functions for the HashTable class
  *
- * @date 09-21-2026 Initial creation and comments
+ * @date 09-21-2026 Initial creation and comments, implementation of getTable
+ * @date 09-22-2026 Implementation of all member functions
  * 
  * @author Alexander Rieke
  * @email riekealexander@gmail.com
@@ -38,7 +39,9 @@ HashNode** HashTable::getTable() {
 * @return   number of buckets in the hash table
 *
 */
-int HashTable::getSize();
+int HashTable::getSize() {
+        return numberOfBuckets;
+    }
 
 
 /**
@@ -52,7 +55,9 @@ int HashTable::getSize();
 * @return   calculated bucket index
 *
 */
-int HashTable::calculateHashCode(int currentKey);
+int HashTable::calculateHashCode(int currentKey) {
+        return (currentKey % numberOfBuckets);
+    }
 
 
 /**
@@ -66,7 +71,9 @@ int HashTable::calculateHashCode(int currentKey);
 * @return   true if the hash table is empty, false otherwise
 *
 */
-bool HashTable::isEmpty();
+bool HashTable::isEmpty() {
+        return (numberOfItems == 0);
+    }
 
 
 /**
@@ -80,7 +87,9 @@ bool HashTable::isEmpty();
 * @return   number of items currently stored in the hash table
 *
 */
-int HashTable::getNumberOfItems();
+int HashTable::getNumberOfItems() {
+        return numberOfItems;
+    }
 
 
 /**
@@ -94,8 +103,37 @@ int HashTable::getNumberOfItems();
 *
 * @return   true if the node was successfully added, false otherwise
 *
+* @status I'm not sure what would be a failure. The three cases I can think of are that we are given a duplicate
+* node/key, or we are given a pointer to a node that doesn't exist, or the curKey doesn't match the key of the given node
+* yeah I'm super confused about what would result in a failure.
+*
 */
-bool HashTable::add(int curKey, HashNode* myNode);
+bool HashTable::add(int curKey, HashNode* myNode) {
+        // check for failures
+        if (myNode == nullptr) {return false;} 
+        if (contains(curKey)) {return false;}
+
+        int bucket_index = calculateHashCode(curKey);
+
+        myNode->key = curKey
+        myNode->hashCode = bucket_index;
+
+        // insert node at the head
+        myNode->prev = nullptr;
+        myNode-> next = table[bucket_index];
+
+        // if bucket isn't empty, makes the old_head->prev point to the new node
+        if (table[bucket_index] != nullptr) {
+            table[bucket_index]->prev = myNode; 
+            }
+
+        // make the beginning of the bucket point to the new node
+        table[index] = myNode;
+
+        ++numberOfItems;
+
+        return true;
+    }
 
 
 /**
@@ -109,7 +147,39 @@ bool HashTable::add(int curKey, HashNode* myNode);
 * @return   true if the node was successfully removed, false if not found
 *
 */
-bool HashTable::remove(int curKey);
+bool HashTable::remove(int curKey) {
+        int bucket_index = calculateHashCode(curKey);
+
+        HashNode* current_node = table[bucket_index]
+
+        while (current_node != nullptr) {
+            if (current_node->key == curKey) {
+                
+                // accounting for the previous node
+                if (current_node->prev != nullptr) {
+                    current->prev->next = current_node->next;
+                } else {
+                    // the case where the the current is the head
+                    table[index] = current_node->next;
+                    }
+                // accounting for the next node
+                if (current->next != nullptr) {
+                    current->next->prev = current->prev;
+                    }
+
+                current->prev = nullptr
+                current->next = nullptr;
+
+                --numberOfItems;
+
+                return true;
+
+                }
+            current = current->next
+            }
+        // the case where no matching key is found
+        return false;
+    }
 
 
 /**
@@ -123,7 +193,20 @@ bool HashTable::remove(int curKey);
 * @return   none
 *
 */
-void HashTable::clear();
+void HashTable::clear() {
+    for (int i = 0; i < numberOfBuckets; ++i) {
+        HashNode* current_node = table[i];
+
+        // delete all the nodes from the current bucket
+        while (current_node != nullptr) {
+            HashNode* temp_node = current_node;
+            current_node = current_node->next;
+            delete temp_node; 
+            } 
+        table[i] = nullptr;
+        }
+    numberOfItems = 0;
+    }
 
 
 /**
