@@ -3,7 +3,8 @@
  * @brief Implementation of the member functions for the HashTable class
  *
  * @date 09-21-2026 Initial creation and comments, implementation of getTable
- * @date 09-22-2026 Implementation of all member functions
+ * @date 09-22-2026 Implementation of most member functions
+ * @date 09-23-2026 Implementation of the last three member functions, getItem, contains, and printTable
  * 
  * @author Alexander Rieke
  * @email riekealexander@gmail.com
@@ -23,6 +24,8 @@
 *
 * @return   pointer to the array of HashNode pointers
 *
+* @status COMPLETED, TESTED
+*
 */
 HashNode** HashTable::getTable() {
         return table;
@@ -38,6 +41,8 @@ HashNode** HashTable::getTable() {
 * @param    none
 *
 * @return   number of buckets in the hash table
+*
+* @status COMPLETED, TESTED
 *
 */
 int HashTable::getSize() {
@@ -55,6 +60,8 @@ int HashTable::getSize() {
 *
 * @return   calculated bucket index
 *
+* @status COMPLETED, TESTED
+*
 */
 int HashTable::calculateHashCode(int currentKey) {
         return (currentKey % numberOfBuckets);
@@ -71,6 +78,8 @@ int HashTable::calculateHashCode(int currentKey) {
 *
 * @return   true if the hash table is empty, false otherwise
 *
+* @status COMPLETED, TESTED
+*
 */
 bool HashTable::isEmpty() {
         return (numberOfItems == 0);
@@ -86,6 +95,8 @@ bool HashTable::isEmpty() {
 * @param    none
 *
 * @return   number of items currently stored in the hash table
+*
+* @status COMPLETED, TESTED
 *
 */
 int HashTable::getNumberOfItems() {
@@ -104,9 +115,7 @@ int HashTable::getNumberOfItems() {
 *
 * @return   true if the node was successfully added, false otherwise
 *
-* @status I'm not sure what would be a failure. The three cases I can think of are that we are given a duplicate
-* node/key, or we are given a pointer to a node that doesn't exist, or the curKey doesn't match the key of the given node
-* yeah I'm super confused about what would result in a failure.
+* @status COMPLETED, TESTED
 *
 */
 bool HashTable::add(int curKey, HashNode* myNode) {
@@ -146,6 +155,8 @@ bool HashTable::add(int curKey, HashNode* myNode) {
 * @param    curKey   key of the node to remove
 *
 * @return   true if the node was successfully removed, false if not found
+*
+* @status COMPLETED, TESTED
 *
 */
 bool HashTable::remove(int curKey) {
@@ -193,6 +204,8 @@ bool HashTable::remove(int curKey) {
 *
 * @return   none
 *
+* @status COMPLETED, TESTED
+*
 */
 void HashTable::clear() {
     for (int i = 0; i < numberOfBuckets; ++i) {
@@ -220,6 +233,8 @@ void HashTable::clear() {
 *
 * @return   pointer to the corresponding HashNode, or nullptr if not found
 *
+* @status COMPLETED, TESTED
+*
 */
 HashNode* HashTable::getItem(int curKey) {
         int bucket_index = calculateHashCode(curKey);
@@ -246,6 +261,8 @@ HashNode* HashTable::getItem(int curKey) {
 *
 * @return   true if the key is found, false otherwise
 *
+* @status COMPLETED, TESTED
+*
 */
 bool HashTable::contains(int curKey) {
         return (getItem(curKey) != nullptr);
@@ -261,6 +278,8 @@ bool HashTable::contains(int curKey) {
 * @param    none
 *
 * @return   none
+*
+* @status COMPLETED, TESTED
 *
 */
 void HashTable::printTable() {
